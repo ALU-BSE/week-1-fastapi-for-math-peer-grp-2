@@ -1,27 +1,19 @@
 from fastapi import FastAPI, Request
 import uvicorn 
 import numpy as np
-import random
 
 app = FastAPI()
 
+def generate_random_matrix():
+    return np.random.randint(-10, 10, size=(5, 5))  # Random integers between 0 and 9
+
+# Initialize M and B as np arrays
+M = generate_random_matrix();
+B = generate_random_matrix();
 # use the post decorator directly below this
 '''
     Initialize M and B as np arrays
 '''
-M = np.array([[1, 2, 3, 4, 5],
-              [1, 2, 3, 4, 5],
-              [1, 2, 3, 4, 5],
-              [1, 2, 3, 4, 5],
-              [1, 2, 3, 4, 5]])
-
-B =np.array([[1, 2, 3, 4, 5],
-              [1, 2, 3, 4, 5],
-              [1, 2, 3, 4, 5],
-              [1, 2, 3, 4, 5],
-              [1, 2, 3, 4, 5]])
-
-   
 #Implement the formula MX + B
 #Have two function one using numpy and another not using numpy
 #Return 
@@ -37,17 +29,15 @@ async def f(request: Request):
 
     X = np.array(matrix)
 
-    print(X)
-
     # Calculate using numpy
     numpy_result = with_numpy(M, X, B)
     
     # Calculate without numpy
-    non_numpy_result = without_numpy(M, B, X)
+    non_numpy_result = without_numpy(M, X, B)
 
     # Apply sigmoid function
     sigmoid_result = sigmoid(numpy_result)
-
+    
     return {
         "matrix_multiplication": numpy_result.tolist(),
         "non_numpy_multiplication": non_numpy_result,
@@ -59,7 +49,7 @@ def with_numpy(M, X, B):
     return np.matmul(M, X) + B
 
 # Function to calculate the matrix multiplication without using numpy
-def without_numpy(mat1, mat2, X):
+def without_numpy(mat1, X, mat2):
     """initialized a matrix of 0 to store solutions"""
     solution = [[0 for _ in range(5)] for _ in range(5)]
     """nested loop to iterate through the matrices rows and columns"""
@@ -69,8 +59,8 @@ def without_numpy(mat1, mat2, X):
         for i in range(5):                  #rows of M
             for j in range(5):              #rows of B
                 for k in range(5):          #multiplication and addition
-                    solution[i][j] += (mat1[i][k] * X[k][j])
-                solution[i][j] += mat2[i][j]
+                    solution[i][j] += int(mat1[i][k] * X[k][j])
+                solution[i][j] += int(mat2[i][j])
     return solution
 
 # Function to apply the sigmoid function
