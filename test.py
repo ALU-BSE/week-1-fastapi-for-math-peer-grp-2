@@ -1,9 +1,6 @@
 from fastapi import FastAPI
 import uvicorn 
 import numpy as np 
-import matplotlib.pyplot as plt 
-
-
 
 app = FastAPI()
 
@@ -32,20 +29,19 @@ def f(x):
     return np.matmul(M, x) + B
  
 def without_numpy(x):
-    return "" 
+    """nested loop to iterate through the matrices rows and columns"""
+    for i in range(5):                  #rows of M
+        for j in range(5):              #rows of B
+            for k in range(5):          #multiplication and addition
+                solution[i][j] += (M[i][k] * B[k][j])
+    return solution
 
 #initialize x as a 5 * 5 matrix
-X = np.ones((5, 5))
-#Make a call to the function
-f(X)
-#Recreate the function with the sigmoid Function
-def sigmoid(x):
-    return 1/(1 + np.exp(-x))
+solution = [[0 for _ in range(5)] for _ in range(5)]
 
-Y = f(X)
-Z = sigmoid(Y)
-print(Y)
-print(Z.tolist())
+#Make a call to the function
+without_numpy(solution)
+#Recreate the function with the sigmoid Function
 
 if __name__ == "__main__":
     uvicorn.run(app)
