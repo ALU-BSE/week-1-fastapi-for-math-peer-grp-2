@@ -35,7 +35,7 @@ def without_numpy(mat1, mat2):
     """initialized a matrix of 0 to store solutions"""
     solution = [[0 for _ in range(5)] for _ in range(5)]
     """nested loop to iterate through the matrices rows and columns"""
-    if len(mat1[0]) != len(mat2) and len(mat1) != len(mat2):
+    if len(mat1) != len(mat2) or len(mat1[0]) != len(mat2[0]):
         raise ValueError("Invalid Matrix Dimensions")
     else:
         for i in range(5):                  #rows of M
