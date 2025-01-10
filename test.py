@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 import uvicorn 
 import numpy as np
 import random
@@ -25,13 +25,41 @@ B =np.array([[1, 2, 3, 4, 5],
 #Implement the formula MX + B
 #Have two function one using numpy and another not using numpy
 #Return 
-@app.post("/")
-def f(x):
-    return np.matmul(M, x) + B
-#initialize x as a 5 * 5 matrix
-x = [[random.uniform(-1, 1) for _ in range(5)] for _ in range(5) ]
+@app.post("/calculate")
+async def f(request: Request):
+    body = await request.json()
 
-def without_numpy(mat1, mat2):
+    matrix = body.get("matrix")
+
+    if not matrix or len(matrix) != 5 or any(len(row) != 5 for row in matrix):
+        return {"error": "Matrix must be 5x5"}
+
+
+    X = np.array(matrix)
+
+    print(X)
+
+    # Calculate using numpy
+    numpy_result = with_numpy(M, X, B)
+    
+    # Calculate without numpy
+    non_numpy_result = without_numpy(M, B, X)
+
+    # Apply sigmoid function
+    sigmoid_result = sigmoid(numpy_result)
+
+    return {
+        "matrix_multiplication": numpy_result.tolist(),
+        "non_numpy_multiplication": non_numpy_result,
+        "sigmoid_output": sigmoid_result.tolist()
+    }
+
+# Function to calculate the matrix multiplication using numpy
+def with_numpy(M, X, B):
+    return np.matmul(M, X) + B
+
+# Function to calculate the matrix multiplication without using numpy
+def without_numpy(mat1, mat2, X):
     """initialized a matrix of 0 to store solutions"""
     solution = [[0 for _ in range(5)] for _ in range(5)]
     """nested loop to iterate through the matrices rows and columns"""
@@ -41,13 +69,13 @@ def without_numpy(mat1, mat2):
         for i in range(5):                  #rows of M
             for j in range(5):              #rows of B
                 for k in range(5):          #multiplication and addition
-                    solution[i][j] += (mat1[i][k] * x[k][j])
+                    solution[i][j] += (mat1[i][k] * X[k][j])
                 solution[i][j] += mat2[i][j]
     return solution
 
-#Make a call to the function
-result = without_numpy(M, B)
-#Recreate the function with the sigmoid Function
+# Function to apply the sigmoid function
+def sigmoid(x):
+    return 1 / (1 + np.exp(-x))
 
 if __name__ == "__main__":
     uvicorn.run(app)
