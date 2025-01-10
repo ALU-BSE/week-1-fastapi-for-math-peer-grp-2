@@ -31,3 +31,9 @@ This FastAPI application demonstrates how to perform matrix multiplication (MX +
 
 ```bash
 curl -X POST http://localhost:8000/calculate -H "Content-Type: application/json" -d '{"matrix": [[1, 2, 3, 4, 5], [6, 7, 8, 9, 10], [11, 12, 13, 14, 15], [16, 17, 18, 19, 20], [21, 22, 23, 24, 25]]}'
+```
+
+
+## Deployment URL
+
+The API is deployed at: https://peer-grp-2.onrender.com
