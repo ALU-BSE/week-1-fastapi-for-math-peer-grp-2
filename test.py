@@ -68,7 +68,7 @@ def sigmoid(x):
     return 1 / (1 + np.exp(-x))
 
 if __name__ == "__main__":
-    uvicorn.run(app)
+    uvicorn.run(app, host="0.0.0.0", port=8080)
 
 '''
     Create a requirements.txt
